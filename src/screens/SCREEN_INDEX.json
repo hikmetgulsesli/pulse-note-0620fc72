@@ -1,0 +1,195 @@
+[
+  {
+    "screenId": "41dea9a4b4004bf19325a433291315b2",
+    "title": "Record Editor - Pulse Note",
+    "componentName": "RecordEditorPulseNote",
+    "file": "src/screens/RecordEditorPulseNote.tsx",
+    "buttons": 2,
+    "inputs": 1,
+    "links": 0,
+    "actions": [
+      {
+        "id": "cancel-1",
+        "kind": "button",
+        "label": "Cancel",
+        "index": 0
+      },
+      {
+        "id": "save-record-2",
+        "kind": "button",
+        "label": "Save Record",
+        "index": 1
+      }
+    ]
+  },
+  {
+    "screenId": "331f6f40df5443678f1f793e44ced69d",
+    "title": "Record Operations - Pulse Note",
+    "componentName": "RecordOperationsPulseNote",
+    "file": "src/screens/RecordOperationsPulseNote.tsx",
+    "buttons": 11,
+    "inputs": 5,
+    "links": 2,
+    "actions": [
+      {
+        "id": "new-record-1",
+        "kind": "button",
+        "label": "New Record",
+        "index": 0
+      },
+      {
+        "id": "settings-2",
+        "kind": "button",
+        "label": "Settings",
+        "index": 1
+      },
+      {
+        "id": "help-3",
+        "kind": "button",
+        "label": "Help",
+        "index": 2
+      },
+      {
+        "id": "edit-4",
+        "kind": "button",
+        "label": "Edit",
+        "index": 3
+      },
+      {
+        "id": "edit-5",
+        "kind": "button",
+        "label": "Edit",
+        "index": 4
+      },
+      {
+        "id": "edit-6",
+        "kind": "button",
+        "label": "Edit",
+        "index": 5
+      },
+      {
+        "id": "retry-7",
+        "kind": "button",
+        "label": "Retry",
+        "index": 6
+      },
+      {
+        "id": "close-8",
+        "kind": "button",
+        "label": "Close",
+        "index": 7
+      },
+      {
+        "id": "edit-details-9",
+        "kind": "button",
+        "label": "Edit Details",
+        "index": 8
+      },
+      {
+        "id": "share-record-10",
+        "kind": "button",
+        "label": "Share Record",
+        "index": 9
+      },
+      {
+        "id": "archive-record-11",
+        "kind": "button",
+        "label": "Archive Record",
+        "index": 10
+      },
+      {
+        "id": "operations-1",
+        "kind": "link",
+        "label": "Operations",
+        "href": "#",
+        "index": 0
+      },
+      {
+        "id": "insights-2",
+        "kind": "link",
+        "label": "Insights",
+        "href": "#",
+        "index": 1
+      }
+    ]
+  },
+  {
+    "screenId": "b3323569b7834fc6b451cdcca6f01eaa",
+    "title": "Insights - Pulse Note",
+    "componentName": "InsightsPulseNote",
+    "file": "src/screens/InsightsPulseNote.tsx",
+    "buttons": 9,
+    "inputs": 0,
+    "links": 2,
+    "actions": [
+      {
+        "id": "settings-1",
+        "kind": "button",
+        "label": "settings",
+        "index": 0
+      },
+      {
+        "id": "help-2",
+        "kind": "button",
+        "label": "help",
+        "index": 1
+      },
+      {
+        "id": "new-record-3",
+        "kind": "button",
+        "label": "New Record",
+        "index": 2
+      },
+      {
+        "id": "filter-4",
+        "kind": "button",
+        "label": "Filter",
+        "index": 3
+      },
+      {
+        "id": "export-summary-5",
+        "kind": "button",
+        "label": "Export Summary",
+        "index": 4
+      },
+      {
+        "id": "more-vert-6",
+        "kind": "button",
+        "label": "More Vert",
+        "index": 5
+      },
+      {
+        "id": "view-all-7",
+        "kind": "button",
+        "label": "View All",
+        "index": 6
+      },
+      {
+        "id": "review-8",
+        "kind": "button",
+        "label": "Review",
+        "index": 7
+      },
+      {
+        "id": "analyze-9",
+        "kind": "button",
+        "label": "Analyze",
+        "index": 8
+      },
+      {
+        "id": "operations-1",
+        "kind": "link",
+        "label": "Operations",
+        "href": "#",
+        "index": 0
+      },
+      {
+        "id": "insights-2",
+        "kind": "link",
+        "label": "Insights",
+        "href": "#",
+        "index": 1
+      }
+    ]
+  }
+]
