@@ -89,8 +89,11 @@ function useOperationsActions(): Partial<Record<RecordOperationsPulseNoteActionI
   // attribute (the screen contract freezes the rendered DOM). Attach a
   // delegated `input` listener that forwards every keystroke through
   // ACT_SEARCH_RECORDS so the persisted `preferences.searchQuery` follows
-  // the user's typing without modifying the generated layout.
+  // the user's typing without modifying the generated layout. The listener
+  // is bound when the operations surface becomes active (and rebound when
+  // the user returns to it after the editor unmounted the input).
   useEffect(() => {
+    if (state.activeSurface !== "operations") return;
     if (typeof document === "undefined") return;
     const input = document.querySelector(
       'input[placeholder="Search records..."]',
@@ -105,13 +108,60 @@ function useOperationsActions(): Partial<Record<RecordOperationsPulseNoteActionI
     return () => {
       input.removeEventListener("input", handler);
     };
-  }, [searchRecords]);
+  }, [state.activeSurface, searchRecords]);
 
-  // The Record Editor title/body inputs are owned by the screen contract;
-  // mirror every keystroke into the shared editor draft so ACT_SAVE_RECORD
-  // can read the latest values from the store at submit time. The form is
-  // only mounted while the editor surface is active, so the listener is
-  // bound conditionally on `activeSurface`.
+  // Mirror the persisted `preferences.searchQuery` from the store back into
+  // the (uncontrolled) DOM input. The search input is unmounted whenever the
+  // user leaves the operations surface, so we re-sync the value each time
+  // the operations surface becomes active or the store's query changes.
+  useEffect(() => {
+    if (state.activeSurface !== "operations") return;
+    if (typeof document === "undefined") return;
+    const input = document.querySelector(
+      'input[placeholder="Search records..."]',
+    ) as HTMLInputElement | null;
+    if (input && input.value !== state.preferences.searchQuery) {
+      input.value = state.preferences.searchQuery;
+    }
+  }, [state.activeSurface, state.preferences.searchQuery]);
+
+  // Bind the editor title/body input listeners once when the editor
+  // surface becomes active. The bindings only depend on
+  // `state.activeSurface` and `updateEditorDraft` so we never re-bind the
+  // DOM listeners on every keystroke (avoids cursor jumping / input lag).
+  useEffect(() => {
+    if (state.activeSurface !== "editor") return;
+    if (typeof document === "undefined") return;
+    const titleInput = document.querySelector(
+      'input#note-title',
+    ) as HTMLInputElement | null;
+    const bodyInput = document.querySelector(
+      'textarea#note-content',
+    ) as HTMLTextAreaElement | null;
+
+    const titleHandler = (event: Event) => {
+      const target = event.target as HTMLInputElement | null;
+      if (!target) return;
+      updateEditorDraft({ title: target.value, dirty: true });
+    };
+    const bodyHandler = (event: Event) => {
+      const target = event.target as HTMLTextAreaElement | null;
+      if (!target) return;
+      updateEditorDraft({ body: target.value, dirty: true });
+    };
+
+    if (titleInput) titleInput.addEventListener("input", titleHandler);
+    if (bodyInput) bodyInput.addEventListener("input", bodyHandler);
+    return () => {
+      if (titleInput) titleInput.removeEventListener("input", titleHandler);
+      if (bodyInput) bodyInput.removeEventListener("input", bodyHandler);
+    };
+  }, [state.activeSurface, updateEditorDraft]);
+
+  // Mirror the persisted editor draft back into the (uncontrolled) DOM
+  // inputs whenever the store value changes while the editor surface is
+  // active. Skipped while the input is focused so user typing is never
+  // interrupted by a redundant write to the same value.
   useEffect(() => {
     if (state.activeSurface !== "editor") return;
     if (typeof document === "undefined") return;
@@ -129,27 +179,10 @@ function useOperationsActions(): Partial<Record<RecordOperationsPulseNoteActionI
     if (bodyInput && bodyInput.value !== draftBody) {
       bodyInput.value = draftBody;
     }
-    const titleHandler = (event: Event) => {
-      const target = event.target as HTMLInputElement | null;
-      if (!target) return;
-      updateEditorDraft({ title: target.value, dirty: true });
-    };
-    const bodyHandler = (event: Event) => {
-      const target = event.target as HTMLTextAreaElement | null;
-      if (!target) return;
-      updateEditorDraft({ body: target.value, dirty: true });
-    };
-    if (titleInput) titleInput.addEventListener("input", titleHandler);
-    if (bodyInput) bodyInput.addEventListener("input", bodyHandler);
-    return () => {
-      if (titleInput) titleInput.removeEventListener("input", titleHandler);
-      if (bodyInput) bodyInput.removeEventListener("input", bodyHandler);
-    };
   }, [
     state.activeSurface,
     state.editorDraft?.title,
     state.editorDraft?.body,
-    updateEditorDraft,
   ]);
 
   const archiveSelected = useCallback(() => {
@@ -180,9 +213,9 @@ function useOperationsActions(): Partial<Record<RecordOperationsPulseNoteActionI
       "new-record-1": createRecord,
       "settings-2": () => setFilterStatus("archived"),
       "help-3": () => setFilterSort("title"),
-      "edit-4": selectRecord,
-      "edit-5": selectRecord,
-      "edit-6": selectRecord,
+      "edit-4": selectRecord(0),
+      "edit-5": selectRecord(1),
+      "edit-6": selectRecord(2),
       "retry-7": retryLoad,
       "close-8": () => {
         storeSelect(null);

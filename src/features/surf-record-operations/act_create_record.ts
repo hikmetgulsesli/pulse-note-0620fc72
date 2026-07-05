@@ -12,10 +12,11 @@ import { useCallback } from "react";
 import { usePulseNote } from "../pulse-note/pulse-note.store";
 
 export function useActCreateRecord(): () => void {
-  const { openEditorDraft, resetTransientError } = usePulseNote();
+  const { openEditorDraft, selectRecord, resetTransientError } = usePulseNote();
 
   return useCallback(() => {
+    selectRecord(null);
     openEditorDraft({ title: "", body: "", dirty: false });
     resetTransientError();
-  }, [openEditorDraft, resetTransientError]);
+  }, [openEditorDraft, selectRecord, resetTransientError]);
 }

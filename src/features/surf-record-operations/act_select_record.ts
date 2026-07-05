@@ -13,13 +13,17 @@ import { useCallback } from "react";
 
 import { usePulseNote } from "../pulse-note/pulse-note.store";
 
-export function useActSelectRecord(): () => void {
+export function useActSelectRecord(): (index: number) => () => void {
   const { state, selectRecord, resetTransientError } = usePulseNote();
 
-  return useCallback(() => {
-    const fallbackId =
-      state.records[0]?.id ?? state.selectedRecordId ?? "row-0";
-    selectRecord(fallbackId);
-    resetTransientError();
-  }, [state.records, state.selectedRecordId, selectRecord, resetTransientError]);
+  return useCallback(
+    (index: number) => () => {
+      const record = state.records[index];
+      const recordId =
+        record?.id ?? state.selectedRecordId ?? `row-${index}`;
+      selectRecord(recordId);
+      resetTransientError();
+    },
+    [state.records, state.selectedRecordId, selectRecord, resetTransientError],
+  );
 }

@@ -39,8 +39,10 @@ export function useActSaveRecord(): () => void {
 
   return useCallback(() => {
     const draft = state.editorDraft;
-    const title = (draft?.title ?? "").trim();
-    const body = draft?.body ?? "";
+    if (!draft) return;
+
+    const title = draft.title.trim();
+    const body = draft.body;
 
     if (title.length === 0) {
       reportError("Title is required to save a record.");
