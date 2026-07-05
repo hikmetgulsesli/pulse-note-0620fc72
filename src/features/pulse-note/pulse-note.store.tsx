@@ -342,7 +342,7 @@ export function PulseNoteProvider({
         type: "REPORT_ERROR",
         message:
           write.storageStatus === "quota_exceeded"
-            ? "Local storage quota exceeded. Older records were trimmed on next save."
+            ? "Local storage quota exceeded. Please delete some records to free up space."
             : "Local storage denied. Records stay in memory only.",
       });
     }

@@ -99,7 +99,7 @@ export function renderWithShell(
   ui: ReactElement,
   options: RenderWithShellOptions = {},
 ): ShellRender {
-  const { storage = null, initialState, ...renderOptions } = options;
+  const { storage = makeFakeStorage(), initialState, ...renderOptions } = options;
   const seeded: PulseNoteState = {
     ...INITIAL_STATE,
     ...initialState,
@@ -116,7 +116,7 @@ export function renderWithShell(
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(
       PulseNoteProvider,
-      { storage: storage ?? undefined, fallbackState: seeded, children },
+      { storage, fallbackState: seeded, children },
     );
 
   const result = render(ui, { wrapper, ...renderOptions });
