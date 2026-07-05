@@ -226,7 +226,31 @@ export function readPulseNoteState(
       : DEFAULT_PREFERENCES.filters,
   };
 
-  const records = payload.records.filter(isPlainObject) as PulseNoteState["records"];
+  const validRecordStatuses = ["active", "archived"] as const;
+  const records = payload.records.filter(
+    (entry): entry is PulseNoteState["records"][number] => {
+      if (!isPlainObject(entry)) return false;
+      const candidate = entry as {
+        id?: unknown;
+        title?: unknown;
+        body?: unknown;
+        status?: unknown;
+        createdAt?: unknown;
+        updatedAt?: unknown;
+      };
+      return (
+        isString(candidate.id) &&
+        isString(candidate.title) &&
+        isString(candidate.body) &&
+        isString(candidate.status) &&
+        validRecordStatuses.includes(
+          candidate.status as typeof validRecordStatuses[number],
+        ) &&
+        isFiniteNumber(candidate.createdAt) &&
+        isFiniteNumber(candidate.updatedAt)
+      );
+    },
+  );
   const activities = payload.activities.filter(
     (entry): entry is PulseNoteState["activities"][number] =>
       isPlainObject(entry) &&

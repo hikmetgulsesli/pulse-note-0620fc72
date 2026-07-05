@@ -143,10 +143,13 @@ function reducer(
           : state.editorDraft.title;
       const nextBody =
         action.draft.body !== undefined ? action.draft.body : state.editorDraft.body;
+      const titleChanged = nextTitle !== state.editorDraft.title;
+      const bodyChanged = nextBody !== state.editorDraft.body;
+      const contentChanged = titleChanged || bodyChanged;
       const nextDirty =
         action.draft.dirty !== undefined
           ? action.draft.dirty
-          : state.editorDraft.dirty || nextTitle.length > 0 || nextBody.length > 0;
+          : state.editorDraft.dirty || contentChanged;
       return {
         ...state,
         editorDraft: {
@@ -273,8 +276,13 @@ export function PulseNoteProvider({
     React.Reducer<PulseNoteState, PulseNoteAction>
   >(reducer, fallbackState ?? INITIAL_STATE);
 
-  // Bootstrap: read persisted state once on mount.
+  // Bootstrap: read persisted state once on mount, unless a fallbackState
+  // was provided (used for SSR / sandboxed tests / deterministic seeds).
   useEffect(() => {
+    if (fallbackState) {
+      dispatch({ type: "BOOTSTRAP", payload: fallbackState });
+      return;
+    }
     const storageInstance = resolveStorage(storage);
     const accessibility = isStorageAvailable(storageInstance);
     if (!accessibility.available) {
@@ -335,14 +343,15 @@ export function PulseNoteProvider({
       });
     }
     // Persistence depends only on persisted fields, not on transient flags
-    // (lastError, loadStatus) or local-only session state (editorDraft).
+    // (lastError, loadStatus, storageStatus — which we deliberately omit so
+    // a REPORT_STORAGE dispatch on write failure does not re-fire the effect)
+    // or local-only session state (editorDraft).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state.records,
     state.activities,
     state.preferences,
     state.selectedRecordId,
-    state.storageStatus,
   ]);
 
   const setSurface = useCallback(
