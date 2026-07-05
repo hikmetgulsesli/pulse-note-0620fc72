@@ -280,7 +280,10 @@ export function PulseNoteProvider({
   // was provided (used for SSR / sandboxed tests / deterministic seeds).
   useEffect(() => {
     if (fallbackState) {
-      dispatch({ type: "BOOTSTRAP", payload: fallbackState });
+      dispatch({
+        type: "BOOTSTRAP",
+        payload: { ...fallbackState, loadStatus: "ready" },
+      });
       return;
     }
     const storageInstance = resolveStorage(storage);
