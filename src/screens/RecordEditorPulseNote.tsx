@@ -7,6 +7,8 @@
 // 3. Wire interactive controls through the typed actions prop
 // 4. Replace placeholder data with props/state
 
+import type { FormEvent } from "react";
+
 import { CircleAlert, Info } from "lucide-react";
 
 
@@ -18,6 +20,11 @@ export interface RecordEditorPulseNoteProps {
 }
 
 export function RecordEditorPulseNote({ actions }: RecordEditorPulseNoteProps) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    actions?.["save-record-2"]?.();
+  };
+
   return (
     <>
       &#123;&#123;DATA:COMPONENTS:COMPONENTS_2&#125;&#125;
@@ -30,7 +37,7 @@ export function RecordEditorPulseNote({ actions }: RecordEditorPulseNoteProps) {
       <span className="font-label-sm text-label-sm uppercase tracking-wider">Unsaved Changes</span>
       </div>
       </header>
-      <form className="space-y-lg">
+      <form className="space-y-lg" onSubmit={handleSubmit}>
       <div className="space-y-xs">
       <label className="block font-label-md text-label-md text-on-surface" htmlFor="note-title">
                               Note Title <span className="text-error">*</span>

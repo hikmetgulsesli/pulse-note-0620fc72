@@ -13,6 +13,14 @@
  *  - keeping the existing `setfarm-app-root` test hook so older assertions
  *    remain valid.
  *
+ * US-002 owns the wiring of Record Editor and Record Operations actions.
+ * `useEditorActions` and `useOperationsActions` build the typed action maps
+ * consumed by the generated screens through their `actions` prop. The
+ * generated screens ship with frozen DOM, so App.tsx also installs
+ * delegated DOM listeners that mirror keystrokes into the shared store
+ * (search input, editor title/body) without modifying the generated
+ * layout.
+ *
  * The shell deliberately does NOT render:
  *  - a visible storage-status badge,
  *  - a visible error banner,
@@ -32,14 +40,212 @@ import {
   usePulseNote,
 } from "./features/pulse-note/pulse-note.store";
 import type { SurfaceId } from "./features/pulse-note/pulse-note.types";
+import { useActCancelEdit } from "./features/surf-record-editor/act_cancel_edit";
+import { useActSaveRecord } from "./features/surf-record-editor/act_save_record";
+import { useActCreateRecord } from "./features/surf-record-operations/act_create_record";
+import { useActRetryLoad } from "./features/surf-record-operations/act_retry_load";
+import { useActSearchRecords } from "./features/surf-record-operations/act_search_records";
+import { useActSelectRecord } from "./features/surf-record-operations/act_select_record";
 import {
   InsightsPulseNote,
   RecordEditorPulseNote,
   RecordOperationsPulseNote,
+  type RecordEditorPulseNoteActionId,
+  type RecordOperationsPulseNoteActionId,
 } from "./screens";
+
+function useEditorActions(): Partial<Record<RecordEditorPulseNoteActionId, () => void>> {
+  const cancelEdit = useActCancelEdit();
+  const saveRecord = useActSaveRecord();
+
+  return useMemo(
+    () => ({
+      "cancel-1": cancelEdit,
+      "save-record-2": saveRecord,
+    }),
+    [cancelEdit, saveRecord],
+  );
+}
+
+function useOperationsActions(): Partial<Record<RecordOperationsPulseNoteActionId, () => void>> {
+  const createRecord = useActCreateRecord();
+  const searchRecords = useActSearchRecords();
+  const selectRecord = useActSelectRecord();
+  const retryLoad = useActRetryLoad();
+  const {
+    state,
+    selectRecord: storeSelect,
+    setSurface,
+    openEditorDraft,
+    archiveRecord,
+    setPanel,
+    setFilterStatus,
+    setFilterSort,
+    reportError,
+    updateEditorDraft,
+  } = usePulseNote();
+
+  // The generated Record Operations top-nav search input has no `onChange`
+  // attribute (the screen contract freezes the rendered DOM). Attach a
+  // delegated `input` listener that forwards every keystroke through
+  // ACT_SEARCH_RECORDS so the persisted `preferences.searchQuery` follows
+  // the user's typing without modifying the generated layout. The listener
+  // is bound when the operations surface becomes active (and rebound when
+  // the user returns to it after the editor unmounted the input).
+  useEffect(() => {
+    if (state.activeSurface !== "operations") return;
+    if (typeof document === "undefined") return;
+    const input = document.querySelector(
+      'input[placeholder="Search records..."]',
+    ) as HTMLInputElement | null;
+    if (!input) return;
+    const handler = (event: Event) => {
+      const target = event.target as HTMLInputElement | null;
+      if (!target) return;
+      searchRecords(target.value);
+    };
+    input.addEventListener("input", handler);
+    return () => {
+      input.removeEventListener("input", handler);
+    };
+  }, [state.activeSurface, searchRecords]);
+
+  // Mirror the persisted `preferences.searchQuery` from the store back into
+  // the (uncontrolled) DOM input. The search input is unmounted whenever the
+  // user leaves the operations surface, so we re-sync the value each time
+  // the operations surface becomes active or the store's query changes.
+  useEffect(() => {
+    if (state.activeSurface !== "operations") return;
+    if (typeof document === "undefined") return;
+    const input = document.querySelector(
+      'input[placeholder="Search records..."]',
+    ) as HTMLInputElement | null;
+    if (input && input.value !== state.preferences.searchQuery) {
+      input.value = state.preferences.searchQuery;
+    }
+  }, [state.activeSurface, state.preferences.searchQuery]);
+
+  // Bind the editor title/body input listeners once when the editor
+  // surface becomes active. The bindings only depend on
+  // `state.activeSurface` and `updateEditorDraft` so we never re-bind the
+  // DOM listeners on every keystroke (avoids cursor jumping / input lag).
+  useEffect(() => {
+    if (state.activeSurface !== "editor") return;
+    if (typeof document === "undefined") return;
+    const titleInput = document.querySelector(
+      'input#note-title',
+    ) as HTMLInputElement | null;
+    const bodyInput = document.querySelector(
+      'textarea#note-content',
+    ) as HTMLTextAreaElement | null;
+
+    const titleHandler = (event: Event) => {
+      const target = event.target as HTMLInputElement | null;
+      if (!target) return;
+      updateEditorDraft({ title: target.value, dirty: true });
+    };
+    const bodyHandler = (event: Event) => {
+      const target = event.target as HTMLTextAreaElement | null;
+      if (!target) return;
+      updateEditorDraft({ body: target.value, dirty: true });
+    };
+
+    if (titleInput) titleInput.addEventListener("input", titleHandler);
+    if (bodyInput) bodyInput.addEventListener("input", bodyHandler);
+    return () => {
+      if (titleInput) titleInput.removeEventListener("input", titleHandler);
+      if (bodyInput) bodyInput.removeEventListener("input", bodyHandler);
+    };
+  }, [state.activeSurface, updateEditorDraft]);
+
+  // Mirror the persisted editor draft back into the (uncontrolled) DOM
+  // inputs whenever the store value changes while the editor surface is
+  // active. Skipped while the input is focused so user typing is never
+  // interrupted by a redundant write to the same value.
+  useEffect(() => {
+    if (state.activeSurface !== "editor") return;
+    if (typeof document === "undefined") return;
+    const titleInput = document.querySelector(
+      'input#note-title',
+    ) as HTMLInputElement | null;
+    const bodyInput = document.querySelector(
+      'textarea#note-content',
+    ) as HTMLTextAreaElement | null;
+    const draftTitle = state.editorDraft?.title ?? "";
+    const draftBody = state.editorDraft?.body ?? "";
+    if (titleInput && titleInput.value !== draftTitle) {
+      titleInput.value = draftTitle;
+    }
+    if (bodyInput && bodyInput.value !== draftBody) {
+      bodyInput.value = draftBody;
+    }
+  }, [
+    state.activeSurface,
+    state.editorDraft?.title,
+    state.editorDraft?.body,
+  ]);
+
+  const archiveSelected = useCallback(() => {
+    const id = state.selectedRecordId;
+    if (!id) {
+      reportError("Select a record before archiving.");
+      return;
+    }
+    const now = Date.now();
+    archiveRecord(id, {
+      id: `act-${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      kind: "archive",
+      recordId: id,
+      at: now,
+    });
+  }, [archiveRecord, reportError, state.selectedRecordId]);
+
+  const shareSelected = useCallback(() => {
+    if (!state.selectedRecordId) {
+      reportError("Select a record before sharing.");
+      return;
+    }
+    reportError(null);
+  }, [reportError, state.selectedRecordId]);
+
+  return useMemo(
+    () => ({
+      "new-record-1": createRecord,
+      "settings-2": () => setFilterStatus("archived"),
+      "help-3": () => setFilterSort("title"),
+      "edit-4": selectRecord(0),
+      "edit-5": selectRecord(1),
+      "edit-6": selectRecord(2),
+      "retry-7": retryLoad,
+      "close-8": () => {
+        storeSelect(null);
+        setPanel("list");
+      },
+      "edit-details-9": () => openEditorDraft(),
+      "share-record-10": shareSelected,
+      "archive-record-11": archiveSelected,
+      "operations-1": () => setSurface("operations"),
+      "insights-2": () => setSurface("insights"),
+    }),
+    [
+      createRecord,
+      selectRecord,
+      retryLoad,
+      storeSelect,
+      openEditorDraft,
+      setFilterStatus,
+      setFilterSort,
+      shareSelected,
+      archiveSelected,
+      setSurface,
+    ],
+  );
+}
 
 function SurfaceSwitch(): JSX.Element {
   const { state } = usePulseNote();
+  const editorActions = useEditorActions();
+  const operationsActions = useOperationsActions();
 
   if (state.activeSurface === "editor") {
     return (
@@ -48,7 +254,7 @@ function SurfaceSwitch(): JSX.Element {
         data-testid="pulse-note-surface-editor"
         aria-label="Record editor"
       >
-        <RecordEditorPulseNote />
+        <RecordEditorPulseNote actions={editorActions} />
       </section>
     );
   }
@@ -70,7 +276,7 @@ function SurfaceSwitch(): JSX.Element {
       aria-label="Record operations"
       data-default-surface="true"
     >
-      <RecordOperationsPulseNote />
+      <RecordOperationsPulseNote actions={operationsActions} />
     </section>
   );
 }
@@ -198,7 +404,7 @@ export default function App(): JSX.Element {
         data-setfarm-root="pulse-note"
         data-testid="setfarm-app-root"
         data-app="pulse-note"
-        className="min-h-screen"
+        className="relative min-h-screen w-full overflow-hidden"
       >
         <ShellDiagnostics />
         <ShellNavigation />
