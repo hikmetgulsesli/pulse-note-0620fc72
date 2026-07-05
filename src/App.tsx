@@ -21,6 +21,14 @@
  * (search input, editor title/body) without modifying the generated
  * layout.
  *
+ * US-003 owns the wiring of Insights actions. `useInsightsActions` builds
+ * the typed action map consumed by the Insights screen through its
+ * `actions` prop. The Insights screen still renders its own DOM frozen
+ * by the generated contract, so the integration layer only routes the
+ * declared `data-action-id` values (filter-4, export-summary-5, …) into
+ * the shared store and the diagnostic bridge — it does not modify the
+ * generated layout.
+ *
  * The shell deliberately does NOT render:
  *  - a visible storage-status badge,
  *  - a visible error banner,
@@ -46,10 +54,13 @@ import { useActCreateRecord } from "./features/surf-record-operations/act_create
 import { useActRetryLoad } from "./features/surf-record-operations/act_retry_load";
 import { useActSearchRecords } from "./features/surf-record-operations/act_search_records";
 import { useActSelectRecord } from "./features/surf-record-operations/act_select_record";
+import { useActExportSummary } from "./features/surf-insights/act_export_summary";
+import { useActFilterInsights } from "./features/surf-insights/act_filter_insights";
 import {
   InsightsPulseNote,
   RecordEditorPulseNote,
   RecordOperationsPulseNote,
+  type InsightsPulseNoteActionId,
   type RecordEditorPulseNoteActionId,
   type RecordOperationsPulseNoteActionId,
 } from "./screens";
@@ -242,10 +253,154 @@ function useOperationsActions(): Partial<Record<RecordOperationsPulseNoteActionI
   );
 }
 
+/**
+ * US-003: typed action map for the Insights screen.
+ *
+ * The Insights screen ships with `data-action-id` attributes on every
+ * interactive control but its `actions` prop is the only channel the
+ * integration layer can use to wire behavior into the shared store.
+ *
+ *  - `settings-1`  /  `help-2`  — capture navigation intent into the
+ *    shell diagnostics so the runtime evidence layer can observe it
+ *    without forcing visible chrome.
+ *  - `new-record-3` — opens a fresh editor draft and switches the
+ *    active surface to the editor (ACT_CREATE).
+ *  - `filter-4` — delegates to `useActFilterInsights` which cycles the
+ *    persisted filter status through `all → active → archived → all`.
+ *  - `export-summary-5` — delegates to `useActExportSummary` which
+ *    writes the current visible records snapshot to localStorage and
+ *    reports success/failure via diagnostics.
+ *  - `more-vert-6`, `view-all-7`, `review-8`, `analyze-9` — secondary
+ *    controls. Each clears the transient error and surfaces the
+ *    diagnostic intent so the runtime evidence layer can observe it.
+ *  - `operations-1` / `insights-2` — link navigation; switches the
+ *    active surface to the requested screen.
+ */
+function useInsightsActions(): Partial<Record<InsightsPulseNoteActionId, () => void>> {
+  const filterInsights = useActFilterInsights();
+  const exportSummary = useActExportSummary();
+  const {
+    state,
+    setSurface,
+    openEditorDraft,
+    selectRecord,
+    resetTransientError,
+  } = usePulseNote();
+
+  const captureIntent = useCallback(
+    (intent: string) => () => {
+      if (typeof globalThis === "undefined") return;
+      const root = (globalThis as unknown as {
+        app?: Record<string, unknown>;
+      }).app;
+      const next = { ...(root ?? {}) } as Record<string, unknown>;
+      const previous = (next.pulseNote ?? {}) as Record<string, unknown>;
+      next.pulseNote = {
+        ...previous,
+        insightsIntent: intent,
+        insightsIntentAt: Date.now(),
+      };
+      (globalThis as unknown as { app: Record<string, unknown> }).app = next;
+    },
+    [],
+  );
+
+  const handleNewRecord = useCallback(() => {
+    selectRecord(null);
+    openEditorDraft({ title: "", body: "", dirty: false });
+    resetTransientError();
+  }, [openEditorDraft, resetTransientError, selectRecord]);
+
+  const handleReview = useCallback(() => {
+    resetTransientError();
+    captureIntent("review-pending-notes")();
+  }, [captureIntent, resetTransientError]);
+
+  const handleAnalyze = useCallback(() => {
+    resetTransientError();
+    captureIntent("analyze-completion-rate")();
+  }, [captureIntent, resetTransientError]);
+
+  const handleMoreVert = useCallback(() => {
+    resetTransientError();
+    captureIntent("chart-more-options")();
+  }, [captureIntent, resetTransientError]);
+
+  const handleViewAll = useCallback(() => {
+    resetTransientError();
+    captureIntent("view-all-activity")();
+  }, [captureIntent, resetTransientError]);
+
+  const handleSettings = useCallback(() => {
+    resetTransientError();
+    if (typeof globalThis !== "undefined") {
+      const root = (globalThis as unknown as {
+        app?: Record<string, unknown>;
+      }).app;
+      const next = { ...(root ?? {}) } as Record<string, unknown>;
+      const previous = (next.pulseNote ?? {}) as Record<string, unknown>;
+      next.pulseNote = {
+        ...previous,
+        navigationIntent: {
+          href: "/settings",
+          source: "insights.settings-1",
+          at: Date.now(),
+        },
+      };
+      (globalThis as unknown as { app: Record<string, unknown> }).app = next;
+    }
+  }, [resetTransientError]);
+
+  const handleHelp = useCallback(() => {
+    resetTransientError();
+    captureIntent("help-insights")();
+  }, [captureIntent, resetTransientError]);
+
+  return useMemo(
+    () => ({
+      "settings-1": handleSettings,
+      "help-2": handleHelp,
+      "new-record-3": handleNewRecord,
+      "filter-4": () => {
+        filterInsights();
+      },
+      "export-summary-5": () => {
+        exportSummary();
+      },
+      "more-vert-6": handleMoreVert,
+      "view-all-7": handleViewAll,
+      "review-8": handleReview,
+      "analyze-9": handleAnalyze,
+      "operations-1": () => setSurface("operations"),
+      "insights-2": () => {
+        // Already on insights — still clear any stale transient error so
+        // the diagnostic mirror stays consistent.
+        resetTransientError();
+        if (state.activeSurface !== "insights") setSurface("insights");
+      },
+    }),
+    [
+      handleSettings,
+      handleHelp,
+      handleNewRecord,
+      filterInsights,
+      exportSummary,
+      handleMoreVert,
+      handleViewAll,
+      handleReview,
+      handleAnalyze,
+      setSurface,
+      resetTransientError,
+      state.activeSurface,
+    ],
+  );
+}
+
 function SurfaceSwitch(): JSX.Element {
   const { state } = usePulseNote();
   const editorActions = useEditorActions();
   const operationsActions = useOperationsActions();
+  const insightsActions = useInsightsActions();
 
   if (state.activeSurface === "editor") {
     return (
@@ -265,7 +420,7 @@ function SurfaceSwitch(): JSX.Element {
         data-testid="pulse-note-surface-insights"
         aria-label="Insights"
       >
-        <InsightsPulseNote />
+        <InsightsPulseNote actions={insightsActions} />
       </section>
     );
   }
@@ -374,10 +529,20 @@ function ShellNavigation(): JSX.Element {
  * so runtime evidence tooling and developer-tools inspection can read
  * storage / load / error / surface state without forcing a visible banner
  * to be rendered around generated full-screen screens.
+ *
+ * US-003 extends the diagnostic mirror with the active Insights filter
+ * status so the runtime evidence layer can observe ACT_FILTER_INSIGHTS /
+ * ACT_EXPORT_SUMMARY without touching the generated screen layout.
  */
 function ShellDiagnostics(): null {
   const { state } = usePulseNote();
-  const { activeSurface, lastError, storageStatus, loadStatus } = state;
+  const {
+    activeSurface,
+    lastError,
+    storageStatus,
+    loadStatus,
+    preferences,
+  } = state;
 
   useEffect(() => {
     if (typeof globalThis === "undefined") return;
@@ -390,9 +555,18 @@ function ShellDiagnostics(): null {
       storageStatus,
       loadStatus,
       lastError,
+      insights: {
+        filterStatus: preferences.filters.status,
+      },
     };
     (globalThis as unknown as { app: Record<string, unknown> }).app = next;
-  }, [activeSurface, lastError, storageStatus, loadStatus]);
+  }, [
+    activeSurface,
+    lastError,
+    storageStatus,
+    loadStatus,
+    preferences.filters.status,
+  ]);
 
   return null;
 }
