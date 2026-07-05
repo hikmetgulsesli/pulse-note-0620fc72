@@ -1,0 +1,35 @@
+[
+  {
+    "screenId": "41dea9a4b4004bf19325a433291315b2",
+    "title": "Record Editor - Pulse Note",
+    "htmlFile": "41dea9a4b4004bf19325a433291315b2.html",
+    "deviceType": "DESKTOP",
+    "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzk1N2U0NTBlNTQ0OTQ3YWQ4Y2M5MjdmMDI0NTNlNTljEgsSBxCN19Wi9xcYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTE5NTUyNzk4MzExOTU1NTQzMA&filename=&opi=96797242",
+    "localHtml": "/Users/setrox/projects/pulse-note-0620fc72/stitch/41dea9a4b4004bf19325a433291315b2.html",
+    "surfaceIds": [
+      "SURF_RECORD_EDITOR"
+    ]
+  },
+  {
+    "screenId": "331f6f40df5443678f1f793e44ced69d",
+    "title": "Record Operations - Pulse Note",
+    "htmlFile": "331f6f40df5443678f1f793e44ced69d.html",
+    "deviceType": "DESKTOP",
+    "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2E2YTBlNjcyM2IyNjQwOTM5Y2VlYmVhZDIxMmU0NTM5EgsSBxCN19Wi9xcYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTE5NTUyNzk4MzExOTU1NTQzMA&filename=&opi=96797242",
+    "localHtml": "/Users/setrox/projects/pulse-note-0620fc72/stitch/331f6f40df5443678f1f793e44ced69d.html",
+    "surfaceIds": [
+      "SURF_RECORD_OPERATIONS"
+    ]
+  },
+  {
+    "screenId": "b3323569b7834fc6b451cdcca6f01eaa",
+    "title": "Insights - Pulse Note",
+    "htmlFile": "b3323569b7834fc6b451cdcca6f01eaa.html",
+    "deviceType": "DESKTOP",
+    "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzQ0OGRhYTM4NzNlYzQ2ZGU5ODhlOGI4YjAyYWRmMzUyEgsSBxCN19Wi9xcYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTE5NTUyNzk4MzExOTU1NTQzMA&filename=&opi=96797242",
+    "localHtml": "/Users/setrox/projects/pulse-note-0620fc72/stitch/b3323569b7834fc6b451cdcca6f01eaa.html",
+    "surfaceIds": [
+      "SURF_INSIGHTS"
+    ]
+  }
+]

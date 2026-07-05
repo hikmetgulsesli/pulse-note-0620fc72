@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Record Operations - Pulse Note</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#0f766e",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "secondary": "#505f76",
+                        "on-secondary-fixed": "#0b1c30",
+                        "tertiary-container": "#9c573a",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-tertiary-container": "#ffe5db",
+                        "surface-bright": "#f7f9fb",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#72361b",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container": "#eceef0",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "secondary-container": "#d0e1fb",
+                        "on-error": "#ffffff",
+                        "tertiary": "#7f4025",
+                        "inverse-primary": "#80d5cb",
+                        "on-tertiary-fixed": "#370e00",
+                        "outline": "#6e7977",
+                        "on-primary-fixed-variant": "#00504a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#00201d",
+                        "surface-tint": "#006a63",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#9cf2e8",
+                        "background": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-container": "#54647a",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed-dim": "#ffb598",
+                        "on-primary-container": "#a3faef",
+                        "primary": "#005c55",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1e",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#80d5cb",
+                        "on-surface-variant": "#3e4947",
+                        "outline-variant": "#bdc9c6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop h-16 shrink-0 z-50">
+<div class="flex items-center gap-xl">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Pulse Note</h1>
+<nav class="hidden md:flex items-center gap-lg h-full">
+<a class="h-16 flex items-center text-primary border-b-2 border-primary text-headline-sm font-headline-sm" href="#">Operations</a>
+<a class="h-16 flex items-center text-secondary hover:bg-surface-container-high transition-colors px-md text-headline-sm font-headline-sm" href="#">Insights</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden lg:block mr-md">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size: 20px;">search</span>
+<input class="pl-[36px] pr-sm py-sm border border-outline-variant rounded bg-surface-container-lowest text-body-sm font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none w-64 text-on-surface placeholder:text-on-surface-variant" placeholder="Search records..." type="text"/>
+</div>
+<button class="bg-primary text-on-primary px-md py-sm rounded text-label-md font-label-md hover:opacity-90 active:scale-95 transition-transform" data-action="ACT_CREATE_RECORD">New Record</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors" data-icon="settings">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors" data-icon="help">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline overflow-hidden ml-sm shrink-0">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate user, neutral lighting, minimalist background, high resolution, suitable for a light-mode enterprise web application dashboard profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEtyce-xjTdeZ6R9vdSCo1wnXrGFDBeYiJ9EvY0SfGIBqC3O6cqwUWMdN_fXLeiGkxFgvH0MpEs3tClAWV51sVhSv1rBkVhZJ5iQQutbZDDP4RcbheCqcOJHey77TZOBTkWacr5ARlSlhnTpJWofHH1q_maPgl5A4WBqBI5K5hi5__krzwPoezm0b48y1RXGSbpudLtOq5feA5IxuMdgYFmE_kPg2XpNiHkB2R7v1EgqvH1eZHA_9SFZsirLIbetMadP0zwYYg3StC"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto bg-surface p-margin-desktop flex flex-col gap-xl">
+<!-- Summary Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg flex flex-col gap-sm">
+<span class="text-label-md font-label-md text-on-surface-variant">Total Records</span>
+<div class="text-headline-lg font-headline-lg text-on-surface">1,248</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg flex flex-col gap-sm">
+<span class="text-label-md font-label-md text-on-surface-variant">Active Operations</span>
+<div class="text-headline-lg font-headline-lg text-primary">842</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg flex flex-col gap-sm">
+<span class="text-label-md font-label-md text-on-surface-variant">Pending Review</span>
+<div class="text-headline-lg font-headline-lg text-tertiary">15</div>
+</div>
+</div>
+<!-- Filters & Actions Bar -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md">
+<div class="flex items-center gap-sm">
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest border border-outline-variant rounded px-md py-sm pr-xl text-body-sm font-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>All Statuses</option>
+<option>Active</option>
+<option>Pending</option>
+<option>Archived</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" style="font-size: 18px;">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest border border-outline-variant rounded px-md py-sm pr-xl text-body-sm font-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+<option>This Year</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" style="font-size: 18px;">expand_more</span>
+</div>
+</div>
+<div class="flex items-center gap-sm text-body-sm font-body-sm text-on-surface-variant">
+                    Showing 1-10 of 1,248
+                </div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex-1 flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-[#F1F5F9] border-b border-outline-variant">
+<tr>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold pl-lg w-12">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Record Title</th>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Date Created</th>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Status</th>
+<th class="p-sm text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right pr-lg">Actions</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-body-sm divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="document.getElementById('preview-panel').classList.remove('hidden')">
+<td class="p-sm pl-lg">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" onclick="event.stopPropagation()" type="checkbox"/>
+</td>
+<td class="p-sm font-medium text-on-surface">Q3 Financial Review - APAC</td>
+<td class="p-sm text-on-surface-variant">Oct 12, 2023</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-[#e6f4ea] text-[#137333]">Active</span>
+</td>
+<td class="p-sm text-right pr-lg">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" data-action="ACT_SELECT_RECORD" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="document.getElementById('preview-panel').classList.remove('hidden')">
+<td class="p-sm pl-lg">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" onclick="event.stopPropagation()" type="checkbox"/>
+</td>
+<td class="p-sm font-medium text-on-surface">Infrastructure Scaling Proposal</td>
+<td class="p-sm text-on-surface-variant">Oct 10, 2023</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-[#fff8e1] text-[#f57f17]">Pending</span>
+</td>
+<td class="p-sm text-right pr-lg">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" data-action="ACT_SELECT_RECORD" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group bg-surface-container-lowest" onclick="document.getElementById('preview-panel').classList.remove('hidden')">
+<td class="p-sm pl-lg">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" onclick="event.stopPropagation()" type="checkbox"/>
+</td>
+<td class="p-sm font-medium text-on-surface">Security Audit H2</td>
+<td class="p-sm text-on-surface-variant">Oct 08, 2023</td>
+<td class="p-sm">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-[#e6f4ea] text-[#137333]">Active</span>
+</td>
+<td class="p-sm text-right pr-lg">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" data-action="ACT_SELECT_RECORD" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty/Error State Placeholder (Hidden by default, shown for demonstration) -->
+<!--
+                <div class="flex-1 flex flex-col items-center justify-center p-xl text-center">
+                    <span class="material-symbols-outlined text-outline text-[48px] mb-md">warning</span>
+                    <h3 class="text-headline-sm font-headline-sm text-on-surface mb-sm">Unable to load records</h3>
+                    <p class="text-body-sm font-body-sm text-on-surface-variant max-w-md mb-lg">There was an issue connecting to the data source. Please try again or check your filters.</p>
+                    <button class="border border-outline-variant text-secondary px-md py-sm rounded text-label-md font-label-md hover:bg-surface-container-low transition-colors" data-action="ACT_RETRY_LOAD">Retry</button>
+                </div>
+                -->
+</div>
+</main>
+<!-- Selected Item Preview Panel (Hidden by default) -->
+<aside class="hidden w-80 lg:w-96 border-l border-outline-variant bg-surface-container-lowest h-full overflow-y-auto shrink-0 flex flex-col shadow-[-4px_0_6px_-1px_rgb(0,0,0,0.05)] z-10 transition-all duration-300 transform translate-x-0" id="preview-panel">
+<div class="p-md border-b border-outline-variant flex justify-between items-center sticky top-0 bg-surface-container-lowest z-10">
+<h2 class="text-headline-sm font-headline-sm text-on-surface">Record Details</h2>
+<button class="text-on-surface-variant hover:text-on-surface p-1 rounded hover:bg-surface-container-low transition-colors" onclick="document.getElementById('preview-panel').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-lg flex flex-col gap-lg">
+<div>
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-xs">Title</div>
+<div class="text-body-md font-body-md text-on-surface font-medium">Q3 Financial Review - APAC</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div>
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-xs">Status</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#e6f4ea] text-[#137333]">Active</span>
+</div>
+<div>
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-xs">Date Created</div>
+<div class="text-body-sm font-body-sm text-on-surface">Oct 12, 2023</div>
+</div>
+</div>
+<div>
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-xs">Description</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+                        Comprehensive review of Q3 financial performance across all APAC regions. Highlights include a 15% YoY growth in software licensing revenue and a slight reduction in operational overhead in the Tokyo office.
+                    </p>
+</div>
+<div class="border-t border-outline-variant pt-lg mt-sm">
+<div class="text-label-sm font-label-sm text-on-surface-variant mb-md">Quick Actions</div>
+<div class="flex flex-col gap-sm">
+<button class="flex items-center gap-sm px-sm py-2 text-body-sm font-body-sm text-on-surface hover:bg-surface-container-low rounded transition-colors text-left w-full">
+<span class="material-symbols-outlined text-outline text-[18px]">edit_document</span>
+                            Edit Details
+                        </button>
+<button class="flex items-center gap-sm px-sm py-2 text-body-sm font-body-sm text-on-surface hover:bg-surface-container-low rounded transition-colors text-left w-full">
+<span class="material-symbols-outlined text-outline text-[18px]">share</span>
+                            Share Record
+                        </button>
+<button class="flex items-center gap-sm px-sm py-2 text-body-sm font-body-sm text-error hover:bg-error-container rounded transition-colors text-left w-full mt-md">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                            Archive Record
+                        </button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

@@ -1,0 +1,29 @@
+[
+  {
+    "screenId": "41dea9a4b4004bf19325a433291315b2",
+    "name": "Record Editor - Pulse Note",
+    "type": "form",
+    "description": "Record Editor - Pulse Note screen",
+    "surfaceIds": [
+      "SURF_RECORD_EDITOR"
+    ]
+  },
+  {
+    "screenId": "331f6f40df5443678f1f793e44ced69d",
+    "name": "Record Operations - Pulse Note",
+    "type": "app-screen",
+    "description": "Record Operations - Pulse Note screen",
+    "surfaceIds": [
+      "SURF_RECORD_OPERATIONS"
+    ]
+  },
+  {
+    "screenId": "b3323569b7834fc6b451cdcca6f01eaa",
+    "name": "Insights - Pulse Note",
+    "type": "app-screen",
+    "description": "Insights - Pulse Note screen",
+    "surfaceIds": [
+      "SURF_INSIGHTS"
+    ]
+  }
+]
