@@ -3,20 +3,35 @@
  *
  * US-001 owns the shared app shell. App.tsx is responsible for:
  *  - wiring `<PulseNoteProvider>` so screens can read shell state,
- *  - rendering the persistent shell chrome (header, navigation, status),
- *  - reaching every product surface declared in DESIGN_BRIEF (operations,
- *    editor, insights) without deleting or bypassing previously reachable
- *    surfaces,
- *  - surfacing the storage / last-error banner when the shell has something
- *    to say to the user,
+ *  - exposing a minimal functional surface switch (operations / editor / insights)
+ *    with action-attached navigation buttons that other stories can drive,
+ *  - surfacing storage / load / error / surface diagnostics through
+ *    `globalThis.app.pulseNote` instead of visible app shell chrome, so the
+ *    generated full-screen screens own the entire viewport on mobile and
+ *    desktop without diagnostic banners pushing, covering, or overflowing
+ *    their layout,
  *  - keeping the existing `setfarm-app-root` test hook so older assertions
  *    remain valid.
+ *
+ * The shell deliberately does NOT render:
+ *  - a visible storage-status badge,
+ *  - a visible error banner,
+ *  - a visible footer with debug strings,
+ *  - decorative branding chrome around the generated screens.
+ *
+ * Smoke / debug state is exposed on `globalThis.app.pulseNote` for the
+ * runtime evidence layer and for developer-tools inspection. Tests that
+ * previously asserted visible chrome must read the same state through
+ * `globalThis.app.pulseNote` or the public store API.
  */
 
 import { useCallback, useEffect, useMemo } from "react";
 
-import { PulseNoteProvider, usePulseNote } from "./features/pulse-note/pulse-note.store";
-import type { PulseNoteState, SurfaceId } from "./features/pulse-note/pulse-note.types";
+import {
+  PulseNoteProvider,
+  usePulseNote,
+} from "./features/pulse-note/pulse-note.store";
+import type { SurfaceId } from "./features/pulse-note/pulse-note.types";
 import {
   InsightsPulseNote,
   RecordEditorPulseNote,
@@ -60,28 +75,21 @@ function SurfaceSwitch(): JSX.Element {
   );
 }
 
-function statusLabel(status: PulseNoteState["storageStatus"]): string {
-  switch (status) {
-    case "available":
-      return "Saved locally";
-    case "missing":
-      return "In-memory only";
-    case "recovered":
-      return "Recovered clean shell";
-    case "denied":
-      return "Storage denied";
-    case "quota_exceeded":
-      return "Storage full";
-    default:
-      return "Unknown";
-  }
-}
+/**
+ * Functional navigation row. Only the buttons the runtime evidence layer
+ * drives are rendered. There is no branding, status badge, or error banner
+ * in this row — those live on `globalThis.app.pulseNote` for diagnostics.
+ */
+function ShellNavigation(): JSX.Element {
+  const { state, setSurface, openEditorDraft } = usePulseNote();
+  const { activeSurface } = state;
 
-function ShellChrome(): JSX.Element {
-  const { state, setSurface, openEditorDraft, resetTransientError } = usePulseNote();
-  const { activeSurface, lastError, storageStatus } = state;
-
-  const navItems: ReadonlyArray<{ id: SurfaceId; label: string; actionId: string; testId: string }> = useMemo(
+  const navItems: ReadonlyArray<{
+    id: SurfaceId;
+    label: string;
+    actionId: string;
+    testId: string;
+  }> = useMemo(
     () => [
       {
         id: "operations",
@@ -114,128 +122,73 @@ function ShellChrome(): JSX.Element {
     openEditorDraft();
   }, [openEditorDraft]);
 
-  const handleDismissError = useCallback(() => {
-    resetTransientError();
-  }, [resetTransientError]);
-
-  // Show a transient banner only when the error is informative (not null).
-  // Errors stay dismissible so the user is never stuck.
-  useEffect(() => {
-    if (!lastError) return;
-    if (typeof window === "undefined") return;
-    const handle = window.setTimeout(() => {
-      resetTransientError();
-    }, 8000);
-    return () => window.clearTimeout(handle);
-  }, [lastError, resetTransientError]);
-
   return (
-    <div
-      className="min-h-screen flex flex-col bg-surface text-on-surface"
-      data-shell-state={activeSurface}
+    <nav
+      aria-label="Product surfaces"
+      className="flex items-center gap-sm"
+      data-testid="pulse-note-primary-nav"
     >
-      <header
-        className="flex flex-wrap items-center gap-md px-md lg:px-xl py-sm bg-surface-container-lowest border-outline-variant"
-        style={{ borderBottomWidth: 1 }}
-        data-testid="pulse-note-header"
-      >
-        <div className="flex items-center gap-sm">
-          <span
-            aria-hidden="true"
-            className="inline-flex items-center justify-center rounded-full bg-primary text-on-primary"
-            style={{ width: 28, height: 28, fontWeight: 700 }}
-          >
-            P
-          </span>
-          <h1 className="font-headline-md text-headline-md text-on-surface">
-            Pulse Note
-          </h1>
-        </div>
-        <nav
-          aria-label="Product surfaces"
-          className="flex items-center gap-sm"
-          data-testid="pulse-note-primary-nav"
-        >
-          {navItems.map((item) => {
-            const isActive = activeSurface === item.id;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={handleSurface(item.id)}
-                aria-current={isActive ? "page" : undefined}
-                data-action-id={item.actionId}
-                data-surface-id={item.id}
-                data-testid={item.testId}
-                className={
-                  "px-md py-sm rounded font-label-md text-label-md " +
-                  (isActive
-                    ? "bg-primary text-on-primary"
-                    : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low")
-                }
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
-        <div className="flex items-center gap-sm ml-sm">
+      {navItems.map((item) => {
+        const isActive = activeSurface === item.id;
+        return (
           <button
+            key={item.id}
             type="button"
-            onClick={handleNewRecord}
-            data-action-id="shell.new-record"
-            data-testid="shell-new-record"
-            className="px-md py-sm rounded font-label-md text-label-md bg-primary text-on-primary hover:opacity-90"
+            onClick={handleSurface(item.id)}
+            aria-current={isActive ? "page" : undefined}
+            data-action-id={item.actionId}
+            data-surface-id={item.id}
+            data-testid={item.testId}
+            className={
+              "px-md py-sm rounded font-label-md text-label-md " +
+              (isActive
+                ? "bg-primary text-on-primary"
+                : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low")
+            }
           >
-            New Record
+            {item.label}
           </button>
-        </div>
-        <div
-          className="ml-sm px-sm py-xs rounded font-label-sm text-label-sm text-on-surface-variant bg-surface-container-low"
-          data-testid="shell-storage-status"
-          data-storage-status={storageStatus}
-        >
-          {statusLabel(storageStatus)}
-        </div>
-      </header>
-
-      {lastError ? (
-        <div
-          role="status"
-          aria-live="polite"
-          className="flex items-center gap-md px-md py-sm bg-error-container text-on-error-container"
-          data-testid="pulse-note-error-banner"
-          data-error-banner="true"
-        >
-          <span className="font-body-sm text-body-sm flex-1">{lastError}</span>
-          <button
-            type="button"
-            onClick={handleDismissError}
-            data-action-id="shell.dismiss-error"
-            data-testid="shell-dismiss-error"
-            className="font-label-md text-label-md underline hover:opacity-80"
-          >
-            Dismiss
-          </button>
-        </div>
-      ) : null}
-
-      <main
-        className="flex-1 p-md lg:p-xl bg-surface"
-        data-testid="pulse-note-main"
-        data-active-surface={activeSurface}
+        );
+      })}
+      <button
+        type="button"
+        onClick={handleNewRecord}
+        data-action-id="shell.new-record"
+        data-testid="shell-new-record"
+        className="px-md py-sm rounded font-label-md text-label-md bg-primary text-on-primary hover:opacity-90"
       >
-        <SurfaceSwitch />
-      </main>
-
-      <footer
-        className="px-md py-sm text-on-surface-variant font-label-sm text-label-sm bg-surface-container-lowest"
-        data-testid="pulse-note-footer"
-      >
-        <span>US-001 shell · records stored locally when available.</span>
-      </footer>
-    </div>
+        New Record
+      </button>
+    </nav>
   );
+}
+
+/**
+ * Diagnostic bridge: mirror shell smoke / debug state to `globalThis.app`
+ * so runtime evidence tooling and developer-tools inspection can read
+ * storage / load / error / surface state without forcing a visible banner
+ * to be rendered around generated full-screen screens.
+ */
+function ShellDiagnostics(): null {
+  const { state } = usePulseNote();
+  const { activeSurface, lastError, storageStatus, loadStatus } = state;
+
+  useEffect(() => {
+    if (typeof globalThis === "undefined") return;
+    const root = (globalThis as unknown as {
+      app?: Record<string, unknown>;
+    }).app;
+    const next = { ...(root ?? {}) } as Record<string, unknown>;
+    next.pulseNote = {
+      activeSurface,
+      storageStatus,
+      loadStatus,
+      lastError,
+    };
+    (globalThis as unknown as { app: Record<string, unknown> }).app = next;
+  }, [activeSurface, lastError, storageStatus, loadStatus]);
+
+  return null;
 }
 
 export default function App(): JSX.Element {
@@ -247,7 +200,9 @@ export default function App(): JSX.Element {
         data-app="pulse-note"
         className="min-h-screen"
       >
-        <ShellChrome />
+        <ShellDiagnostics />
+        <ShellNavigation />
+        <SurfaceSwitch />
       </div>
     </PulseNoteProvider>
   );
