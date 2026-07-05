@@ -1,0 +1,438 @@
+[
+  {
+    "screenId": "41dea9a4b4004bf19325a433291315b2",
+    "screenTitle": "Record Editor - Pulse Note",
+    "deviceType": "DESKTOP",
+    "elements": [
+      {
+        "type": "button",
+        "label": "Cancel",
+        "line": 141
+      },
+      {
+        "type": "button",
+        "label": "Save Record",
+        "line": 144
+      },
+      {
+        "type": "input",
+        "label": "Enter title...",
+        "inputType": "text",
+        "placeholder": "Enter title...",
+        "line": 128
+      },
+      {
+        "type": "input",
+        "label": "Start typing your note here...",
+        "inputType": "textarea",
+        "placeholder": "Start typing your note here...",
+        "line": 138
+      },
+      {
+        "type": "form",
+        "label": "form",
+        "line": 123
+      }
+    ],
+    "navigation": [],
+    "buttons": [
+      {
+        "type": "button",
+        "label": "Cancel",
+        "line": 141
+      },
+      {
+        "type": "button",
+        "label": "Save Record",
+        "line": 144
+      }
+    ],
+    "inputs": [
+      {
+        "type": "input",
+        "label": "Enter title...",
+        "inputType": "text",
+        "placeholder": "Enter title...",
+        "line": 128
+      },
+      {
+        "type": "input",
+        "label": "Start typing your note here...",
+        "inputType": "textarea",
+        "placeholder": "Start typing your note here...",
+        "line": 138
+      }
+    ],
+    "hardcodedData": [],
+    "totalInteractive": 5,
+    "requiresRouter": false,
+    "requiresDragDrop": false
+  },
+  {
+    "screenId": "331f6f40df5443678f1f793e44ced69d",
+    "screenTitle": "Record Operations - Pulse Note",
+    "deviceType": "DESKTOP",
+    "elements": [
+      {
+        "type": "link",
+        "label": "Operations",
+        "href": "#",
+        "line": 118
+      },
+      {
+        "type": "link",
+        "label": "Insights",
+        "href": "#",
+        "line": 119
+      },
+      {
+        "type": "button",
+        "label": "New Record",
+        "line": 127
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 128
+      },
+      {
+        "type": "button",
+        "label": "help",
+        "line": 131
+      },
+      {
+        "type": "button",
+        "label": "edit",
+        "line": 209
+      },
+      {
+        "type": "button",
+        "label": "edit",
+        "line": 225
+      },
+      {
+        "type": "button",
+        "label": "edit",
+        "line": 241
+      },
+      {
+        "type": "button",
+        "label": "Retry",
+        "line": 255
+      },
+      {
+        "type": "button",
+        "label": "close",
+        "line": 264
+      },
+      {
+        "type": "button",
+        "label": "Edit Details",
+        "line": 292
+      },
+      {
+        "type": "button",
+        "label": "Record",
+        "line": 296
+      },
+      {
+        "type": "button",
+        "label": "Archive Record",
+        "line": 300
+      },
+      {
+        "type": "input",
+        "label": "Search records...",
+        "inputType": "text",
+        "placeholder": "Search records...",
+        "line": 125
+      },
+      {
+        "type": "input",
+        "label": "select",
+        "inputType": "select",
+        "line": 161
+      },
+      {
+        "type": "input",
+        "label": "select",
+        "inputType": "select",
+        "line": 170
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 189
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 201
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 217
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 233
+      }
+    ],
+    "navigation": [
+      {
+        "type": "link",
+        "label": "Operations",
+        "href": "#",
+        "line": 118
+      },
+      {
+        "type": "link",
+        "label": "Insights",
+        "href": "#",
+        "line": 119
+      }
+    ],
+    "buttons": [
+      {
+        "type": "button",
+        "label": "New Record",
+        "line": 127
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 128
+      },
+      {
+        "type": "button",
+        "label": "help",
+        "line": 131
+      },
+      {
+        "type": "button",
+        "label": "edit",
+        "line": 209
+      },
+      {
+        "type": "button",
+        "label": "edit",
+        "line": 225
+      },
+      {
+        "type": "button",
+        "label": "edit",
+        "line": 241
+      },
+      {
+        "type": "button",
+        "label": "Retry",
+        "line": 255
+      },
+      {
+        "type": "button",
+        "label": "close",
+        "line": 264
+      },
+      {
+        "type": "button",
+        "label": "Edit Details",
+        "line": 292
+      },
+      {
+        "type": "button",
+        "label": "Record",
+        "line": 296
+      },
+      {
+        "type": "button",
+        "label": "Archive Record",
+        "line": 300
+      }
+    ],
+    "inputs": [
+      {
+        "type": "input",
+        "label": "Search records...",
+        "inputType": "text",
+        "placeholder": "Search records...",
+        "line": 125
+      },
+      {
+        "type": "input",
+        "label": "select",
+        "inputType": "select",
+        "line": 161
+      },
+      {
+        "type": "input",
+        "label": "select",
+        "inputType": "select",
+        "line": 170
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 189
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 201
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 217
+      },
+      {
+        "type": "input",
+        "label": "checkbox",
+        "inputType": "checkbox",
+        "line": 233
+      }
+    ],
+    "hardcodedData": [],
+    "totalInteractive": 20,
+    "requiresRouter": false,
+    "requiresDragDrop": false
+  },
+  {
+    "screenId": "b3323569b7834fc6b451cdcca6f01eaa",
+    "screenTitle": "Insights - Pulse Note",
+    "deviceType": "DESKTOP",
+    "elements": [
+      {
+        "type": "link",
+        "label": "Operations",
+        "href": "#",
+        "line": 115
+      },
+      {
+        "type": "link",
+        "label": "Insights",
+        "href": "#",
+        "line": 118
+      },
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 125
+      },
+      {
+        "type": "button",
+        "label": "help",
+        "line": 128
+      },
+      {
+        "type": "button",
+        "label": "New Record",
+        "line": 132
+      },
+      {
+        "type": "button",
+        "label": "Filter",
+        "line": 149
+      },
+      {
+        "type": "button",
+        "label": "Export Summary",
+        "line": 153
+      },
+      {
+        "type": "button",
+        "label": "more_vert",
+        "line": 190
+      },
+      {
+        "type": "button",
+        "label": "View All",
+        "line": 238
+      },
+      {
+        "type": "button",
+        "label": "Review",
+        "line": 288
+      },
+      {
+        "type": "button",
+        "label": "Analyze",
+        "line": 299
+      }
+    ],
+    "navigation": [
+      {
+        "type": "link",
+        "label": "Operations",
+        "href": "#",
+        "line": 115
+      },
+      {
+        "type": "link",
+        "label": "Insights",
+        "href": "#",
+        "line": 118
+      }
+    ],
+    "buttons": [
+      {
+        "type": "button",
+        "label": "settings",
+        "line": 125
+      },
+      {
+        "type": "button",
+        "label": "help",
+        "line": 128
+      },
+      {
+        "type": "button",
+        "label": "New Record",
+        "line": 132
+      },
+      {
+        "type": "button",
+        "label": "Filter",
+        "line": 149
+      },
+      {
+        "type": "button",
+        "label": "Export Summary",
+        "line": 153
+      },
+      {
+        "type": "button",
+        "label": "more_vert",
+        "line": 190
+      },
+      {
+        "type": "button",
+        "label": "View All",
+        "line": 238
+      },
+      {
+        "type": "button",
+        "label": "Review",
+        "line": 288
+      },
+      {
+        "type": "button",
+        "label": "Analyze",
+        "line": 299
+      }
+    ],
+    "inputs": [],
+    "hardcodedData": [],
+    "totalInteractive": 11,
+    "requiresRouter": false,
+    "requiresDragDrop": false
+  }
+]
